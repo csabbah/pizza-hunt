@@ -44,6 +44,8 @@ const CommentSchema = new Schema(
   },
   {
     toJSON: {
+      // Allow the parent Comment schema to access virtuals so we can..
+      // count replies
       virtuals: true,
       getters: true,
     },
@@ -51,6 +53,7 @@ const CommentSchema = new Schema(
   }
 );
 
+// Return the amount of replies
 CommentSchema.virtual('replyCount').get(function () {
   return this.replies.length;
 });
