@@ -4,6 +4,15 @@ const pizzaController = {
   // get all pizzas
   getAllPizza(req, res) {
     Pizza.find({})
+      .populate({
+        path: 'comments',
+        // Adding a '-' indicates we don't want to return this data '__v"
+        select: '-__v',
+      })
+      // This select statement is attached to the parent Pizza data
+      .select('-__v')
+      // This would sort based on the pizza ID and return the newest Pizzas first
+      .sort({ _id: -1 })
       .then((dbPizzaData) => res.json(dbPizzaData))
       .catch((err) => {
         console.log(err);
@@ -14,8 +23,12 @@ const pizzaController = {
   // get one pizza by id
   getPizzaById({ params }, res) {
     Pizza.findOne({ _id: params.id })
+      .populate({
+        path: 'comments',
+        select: '-__v',
+      })
+      .select('-__v')
       .then((dbPizzaData) => {
-        // If no pizza is found, send 404
         if (!dbPizzaData) {
           res.status(404).json({ message: 'No pizza found with this id!' });
           return;
